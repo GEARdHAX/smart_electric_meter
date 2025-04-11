@@ -33,17 +33,17 @@ Built using Python, Flask (for backend API), Streamlit (for frontend UI), and tr
 ## 📁 Folder Structure
 
 smart-electric_meter/
-├── app.py # Streamlit frontend (user interface)
-├── model_api.py # Flask backend API (serves ML model predictions)
-├── fan_model.pkl # Trained RandomForest model for fan
-├── fridge_model.pkl # Trained RandomForest model for fridge
-├── tv_model.pkl # Trained RandomForest model for LED TV
-├── datasets/ # (Optional) CSV files used for training
+├── app.py 
+├── model_api.py 
+├── fan_model.pkl 
+├── fridge_model.pkl 
+├── tv_model.pkl 
+├── datasets/ 
 │ └── fan_3month.csv
 │ └── fridge_data.csv
 │ └── LED_TV_Dataset_Extended.csv
-├── README.md # Project documentation
-└── requirements.txt # Python dependencies
+├── README.md 
+└── requirements.txt 
 
 ---
 
