@@ -1,0 +1,303 @@
+1. Write a program to multiply two 16 bit binary numbers. 
+ 
+ 
+AREA MULTIPLY, CODE, READONLY 
+ 
+ENTRY    ;Mark first instruction to execute 
+ 
+START  
+ 
+ MOV r1, #6400            ; STORE FIRST NUMBER IN R0 
+ MOV r2, #3200            ; STORE SECOND NUMBER IN R1 
+ MUL r3, r1, r2  ; MULTIPLICATION 
+back B back 
+END     ; Mark end of file 
+ 
+ 
+1. Program to multiply two 16 bit numbers defined in memory and display the result in register 
+  
+ AREA MULTIPLY, CODE, READONLY ; NAME THE CODE BLOCK 
+  ENTRY 
+START 
+  LDR R0, =VALUE1  
+ LDRH R1,[R0] 
+ LDR R0,=VALUE2 
+ LDRH R2,[R0] 
+ MUL R3,R2,R1 
+  
+BACK B BACK 
+VALUE1 DCW &BBBB  ; OR 0XBBBB 
+VALUE2 DCW &CCCC  ; OR 0XCCCC 
+ END 
+
+
+2. Write a program to find the sum of first 10 integer numbers. 
+ 
+AREA SUM, CODE, READONLY 
+ 
+ENTRY 
+   
+MOV R1, #10   ; load 10 to register 
+  MOV R2, #0   ; empty the register to store result 
+Loop 
+  ADD R2, R2, R1  ; add the content of R1 with result at R2 
+  SUBS R1, #0x01  ; Decrement R1 by 1 
+  BNE loop   ; repeat till r1 goes 0 
+ 
+back  B back   ; jumps back to C code 
+  END
+
+
+
+
+3. Write a program to find factorial of a number. 
+ 
+AREA FACTORIAL, CODE, READONLY 
+ 
+ENTRY    ; Mark first instruction to execute 
+ 
+START 
+ 
+   MOV r0, #3  ; STORE FACTORIAL NUMBER IN R0 
+   MOV r1, r0 ; MOVE THE SAME NUMBER IN R1 
+ 
+FACT  SUBS r1, r1, #1  ; SUBTRACTION 
+   CMP r1, #1             ; COMPARISON 
+   BEQ STOP 
+   MUL r3, r0, r1 ; MULTIPLICATION 
+   MOV r0, r3  ; Result 
+   BNE FACT               ; BRANCH TO THE LOOP IF NOT EQUAL 
+STOP 
+  
+ back  B   back 
+  NOP 
+  NOP     
+ 
+  END  
+
+
+
+ 
+4. Write a program to find the largest/smallest number in an array of 32 numbers  
+ 
+LARGEST NUMBER: 
+ 
+AREA LARGEST, CODE, READONLY 
+ 
+ENTRY    ; Mark first instruction to execute 
+ 
+START 
+ MOV R5,#6   ; INTIALISE COUNTER TO 6(i.e. N=7) 
+ LDR R1,=VALUE1     ; LOADS THE ADDRESS OF FIRST VALUE 
+ LDR R2,[R1],#4  ; WORD ALIGN T0 ARRAY ELEMENT  
+LOOP 
+ LDR R4, [R1], #4  ; WORD ALIGN T0 ARRAY ELEMENT  
+ CMP R2, R4   ; COMPARE NUMBERS 
+ BHI LOOP1   ; IF THE FIRST NUMBER IS > THEN GOTO LOOP1 
+ 
+ MOV R2, R4   ; IF THE FIRST NUMBER IS < THEN MOV CONTENT R4 TO 
+R2 
+LOOP1      
+ SUBS R5, R5, #1  ; DECREMENT COUNTER 
+ CMP R5, #0   ; COMPARE COUNTER TO 0 
+ BNE LOOP   ; LOOP BACK TILL ARRAY ENDS 
+ 
+ LDR R4, =RESULT  ; LOADS THE ADDRESS OF RESULT  
+ STR R2, [R4]   ; STORES THE RESULT IN R2 
+ 
+ BACK B BACK 
+ NOP 
+ NOP 
+ 
+ 
+; ARRAY OF 32 BIT NUMBERS (N=7) 
+ 
+VALUE1  
+  DCD  0X44444444   ; 
+  DCD 0X22222222   ; 
+  DCD 0X11111111   ; 
+  DCD 0X33333333   ; 
+  DCD 0XAAAAAAAA  ; 
+  DCD 0X88888888   ; 
+  DCD 0X99999999   ; 
+ 
+ AREA DATA2, DATA, READWRITE; TO STORE RESULT IN GIVEN ADDRESS 
+   
+RESULT DCD 0X0     
+ 
+ END    ; Mark end of file 
+ 
+ 
+4. SMALLEST NUMBER: 
+ 
+AREA SMALLEST, CODE, READONLY 
+ 
+           ENTRY    ; Mark first instruction to execute 
+ 
+START 
+ MOV R5, #6   ; INTIALISE COUNTER TO 6(i.e. N=7) 
+ LDR R1, =VALUE1     ; LOADS THE ADDRESS OF FIRST VALUE 
+ LDR R2, [R1], #4  ; WORD ALIGN T0 ARRAY ELEMENT  
+LOOP 
+ LDR R4, [R1], #4  ; WORD ALIGN T0 ARRAY ELEMENT  
+ CMP R2, R4   ; COMPARE NUMBERS 
+ BLS LOOP1   ; IF THE FIRST NUMBER IS < THEN GOTO LOOP1 
+ 
+ MOV R2, R4   ; IF THE FIRST NUMBER IS > THEN MOV CONTENT R4 TO 
+R2 
+LOOP1      
+ SUBS R5, R5, #1  ; DECREMENT COUNTER 
+ CMP R5, #0   ; COMPARE COUNTER TO 0 
+ BNE LOOP   ; LOOP BACK TILL ARRAY ENDS 
+ 
+ LDR R4,=RESULT  ; LOADS THE ADDRESS OF RESULT  
+ STR R2, [R4]   ; STORES THE RESULT IN R1 
+ 
+ BACK B BACK 
+ NOP 
+ NOP 
+ 
+ 
+; ARRAY OF 32 BIT NUMBERS (N=7) 
+ 
+VALUE1  
+  DCD 0X44444444   ; 
+  DCD 0X22222222   ; 
+  DCD 0X11111111   ; 
+  DCD 0X22222222   ;      
+  DCD 0XAAAAAAAA   ; 
+  DCD 0X88888888   ;    
+  DCD 0X99999999   ; 
+ 
+  
+ 
+ AREA DATA2, DATA, READWRITE; TO STORE RESULT IN GIVEN ADDRESS 
+   
+RESULT DCD 0X0     
+ 
+ END    ; Mark end of file 
+ 
+ 
+5. Interface a Stepper motor and rotate it in clockwise and anti-clockwise direction.
+
+ #include <LPC21xx.H>
+
+ void clock_wise(void);
+ void anti_clock_wise(void);
+ 
+ unsigned long int var1,var2;
+ unsigned int i=0,j=0,k=0;
+
+ int main(void)
+ {
+	PINSEL0 = 0x00FFFFFF;		//P0.12 to P0.15 GPIo
+	IO0DIR |= 0x0000F000;		//P0.12 to P0.15 output
+
+	while(1)
+	{
+		for(j=0;j<50;j++)       // 20 times in Clock wise Rotation
+			clock_wise();
+		
+		for(k=0;k<65000;k++);   // Delay to show  anti_clock Rotation 
+		
+		for(j=0;j<50;j++)       // 20 times in  Anti Clock wise Rotation
+			anti_clock_wise();
+
+		for(k=0;k<65000;k++);   // Delay to show clock Rotation 
+
+	} 							// End of while(1)
+
+ } 								// End of main
+
+ void clock_wise(void)
+ {
+	var1 = 0x00000800;         	//For Clockwise
+    for(i=0;i<=3;i++)         	// for A B C D Stepping
+	{
+		var1 = var1<<1;        	//For Clockwise
+        var2 = ~var1;
+        var2 = var2 & 0x0000F000;
+
+		IO0PIN = ~var2;
+		
+        for(k=0;k<3000;k++); 	//for step speed variation         
+      }
+
+ }
+
+ void anti_clock_wise(void)
+ {
+	var1 = 0x00010000;      	//For Anticlockwise
+     for(i=0;i<=3;i++)      	// for A B C D Stepping
+      {
+        var1 = var1>>1;     	//For Anticlockwise
+        var2 = ~var1;
+        var2 = var2 & 0x0000F000;
+
+		IO0PIN = ~var2;
+        for(k=0;k<3000;k++); 	//for step speed variation 
+             
+      }
+ }
+
+
+6. Add array of 16 bit numbers and store it in 32 bit result in internal RAM
+
+		AREA ADD, CODE, READONLY
+ENTRY
+START
+		MOV R5, #3
+		MOV R0, #0
+		LDR R1,=VALUE1
+LOOP
+		LDRH R3, [R1],#4
+		ADD R0,R0,R3
+		SUBS R5,R5,#1
+		CMP R5,#0
+		BNE LOOP
+		LDR R4,=RESULT
+		STR R0, [R4]
+STOP
+		B STOP
+		
+VALUE1
+		DCD 0X1010, 0X2002,0X3003
+		AREA INFO,DATA,READWRITE
+RESULT
+		DCD 0X00000000
+		END
+
+
+7. DC motor
+
+
+#include <lpc214x.h>
+
+void clock_wise(void);
+void anti_clock_wise(void);
+unsigned int j = 0;
+
+int main(void) {
+    IO0DIR |= 0x00000300;   // Set P0.8 and P0.9 as output
+    IO0SET = 0x00000100;    // P0.8 = HIGH (Enable pin)
+
+    while (1) {
+        clock_wise();
+        for (j = 0; j < 800000; j++);  // Delay
+
+        anti_clock_wise();
+        for (j = 0; j < 800000; j++);  // Delay
+    }
+}
+
+void clock_wise(void) {
+    IO0CLR = 0x00000300;    // Clear P0.8 and P0.9
+    for (j = 0; j < 100000; j++);  // Small delay
+    IO0SET = 0x00000200;    // Set P0.9 HIGH for CW rotation
+}
+
+void anti_clock_wise(void) {
+    IO0CLR = 0x00000300;    // Clear P0.8 and P0.9
+    for (j = 0; j < 100000; j++);  // Small delay
+    IO0SET = 0x00000100;    // Set P0.8 HIGH for CCW rotation
+}
